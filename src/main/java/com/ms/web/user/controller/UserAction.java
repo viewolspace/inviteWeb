@@ -18,11 +18,7 @@ import io.swagger.annotations.Tag;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import java.util.Date;
 
 @SwaggerDefinition(
@@ -44,10 +40,11 @@ public class UserAction {
     @Produces("text/html;charset=UTF-8")
     @ApiOperation(value = "根据openid查询用户信息", notes = "", author = "更新于 2019-05-24")
     @ApiResponses(value = {
-            @ApiResponse(code = "0000", message = "请求成功", response = QueryUserResponse.class)
+            @ApiResponse(code = "0000", message = "请求成功", response = QueryUserResponse.class),
+            @ApiResponse( code = "0001", message = "用户不存在", response = QueryUserResponse.class)
 
     })
-    public String getUserByOpenid(@ApiParam(value = "微信open_id", required = true) @FormParam("openId") String openId) {
+    public String getUserByOpenid(@ApiParam(value = "微信open_id", required = true) @QueryParam("openId") String openId) {
 
         try {
             User user = userService.getUserByOpenId(openId);
@@ -115,6 +112,7 @@ public class UserAction {
             return YouguuJsonHelper.returnJSON("0011", "保存用户信息失败");
 
         } catch (Exception e) {
+            e.printStackTrace();
             return YouguuJsonHelper.returnJSON("0012", "网络加速中");
         }
 
@@ -159,6 +157,7 @@ public class UserAction {
             return YouguuJsonHelper.returnJSON("0011", "保存用户信息失败");
 
         } catch (Exception e) {
+            e.printStackTrace();
             return YouguuJsonHelper.returnJSON("0012", "网络加速中");
         }
 
@@ -184,6 +183,7 @@ public class UserAction {
 
             return YouguuJsonHelper.returnJSON("0000", "ok", headUrl);
         } catch (Exception e) {
+            e.printStackTrace();
             return YouguuJsonHelper.returnJSON("0012", "网络加速中");
         }
 
@@ -208,6 +208,7 @@ public class UserAction {
             }
             return YouguuJsonHelper.returnJSON("0011", "修改用户游戏状态失败");
         } catch (Exception e) {
+            e.printStackTrace();
             return YouguuJsonHelper.returnJSON("0012", "网络加速中");
         }
 
