@@ -51,6 +51,11 @@ public class UserAction {
 
         try {
             User user = userService.getUserByOpenId(openId);
+
+            if(user==null){
+                return YouguuJsonHelper.returnJSON("0001", "用户不存在");
+            }
+
             UserSummary userSummary = userSummaryService.getUserSummary(user.getUid());
 
             QueryUserResponse response = new QueryUserResponse();
@@ -71,6 +76,7 @@ public class UserAction {
 
             return YouguuJsonHelper.returnJSON("0000", "ok", response);
         } catch (Exception e) {
+            e.printStackTrace();
             return YouguuJsonHelper.returnJSON("0012", "网络加速中");
         }
     }
