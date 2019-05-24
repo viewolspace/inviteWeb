@@ -88,14 +88,15 @@ public class UserAction {
     public String addUser(@ApiParam(value = "第三方用户唯一标识", required = true) @FormParam("thirdId") String thirdId,
                           @ApiParam(value = "微信open_id", required = true) @FormParam("openId") String openId,
                           @ApiParam(value = "用户昵称", required = true) @FormParam("nickName") String nickName,
-                          @ApiParam(value = "用户头像URL") @FormParam("headPic") String headPic) {
+                          @ApiParam(value = "用户头像URL") @FormParam("headPic") String headPic,
+                          @ApiParam(value = "成交状态：0-未成交；1-已成交") @FormParam("status") int status) {
 
         try {
             User user = new User();
             user.setThirdId(thirdId);
             user.setOpenId(openId);
             user.setGameResult(0);//默认未完成
-            user.setCommitStatus(0);//默认未成交
+            user.setCommitStatus(status);//默认未成交
             user.setNickName(nickName);
             user.setHeadPic(headPic);
             user.setcTime(new Date());
@@ -123,22 +124,28 @@ public class UserAction {
             @ApiResponse(code = "0001", message = "系统异常", response = Response.class)
     })
     public String addUserWithInvite(@ApiParam(value = "第三方用户唯一标识", required = true) @FormParam("thirdId") String thirdId,
-                                    @ApiParam(value = "微信open_id", required = true) @FormParam("openId") String openId,
+                                    @ApiParam(value = "微信open_id（被邀请人）", required = true) @FormParam("openId") String openId,
+                                    @ApiParam(value = "微信open_id（邀请人）", required = true) @FormParam("inviteOpenId") String inviteOpenId,
                                     @ApiParam(value = "用户昵称", required = true) @FormParam("nickName") String nickName,
                                     @ApiParam(value = "用户头像URL") @FormParam("headPic") String headPic,
-                                    @ApiParam(value = "邀请用户ID") @FormParam("inviteUid") int inviteUid) {
+                                    @ApiParam(value = "成交状态：0-未成交；1-已成交") @FormParam("status") int status) {
 
         try {
             User user = new User();
             user.setThirdId(thirdId);
             user.setOpenId(openId);
             user.setGameResult(0);//默认未完成
-            user.setCommitStatus(0);//默认未成交
+            user.setCommitStatus(status);//默认未成交
             user.setNickName(nickName);
             user.setHeadPic(headPic);
             user.setcTime(new Date());
 
-            int result = userService.addUser(user, inviteUid);
+            User inviteUser = userService.getUserByOpenId(inviteOpenId);
+
+            if(null == inviteUser){
+                return YouguuJsonHelper.returnJSON("0013", "邀请人不存在");
+            }
+            int result = userService.addUser(user, inviteUser.getUid());
             if (result > 0) {
                 return YouguuJsonHelper.returnJSON("0000", "成功");
 
@@ -160,11 +167,14 @@ public class UserAction {
             @ApiResponse(code = "0002", message = "参数错误", response = Response.class),
             @ApiResponse(code = "0001", message = "系统异常", response = Response.class)
     })
-    public String genPlaybill(@ApiParam(value = "用户ID", required = true) @FormParam("uid") int uid,
-                              @ApiParam(value = "用户头像URL", required = true) @FormParam("headPic") String headPic) {
+    public String genPlaybill(@ApiParam(value = "用户ID", required = true) @FormParam("uid") int uid) {
 
         try {
-           String headUrl = ImageHandler.genPlaybill(uid, headPic);
+            User user = userService.getUser(uid);
+            if(null == user){
+                return YouguuJsonHelper.returnJSON("0011", "用户不存在");
+            }
+            String headUrl = ImageHandler.genPlaybill(uid, user.getHeadPic());
 
             return YouguuJsonHelper.returnJSON("0000", "ok", headUrl);
         } catch (Exception e) {
