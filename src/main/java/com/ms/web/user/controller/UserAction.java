@@ -18,7 +18,12 @@ import io.swagger.annotations.Tag;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import javax.ws.rs.*;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import java.util.Date;
 
 @SwaggerDefinition(
@@ -41,7 +46,7 @@ public class UserAction {
     @ApiOperation(value = "根据openid查询用户信息", notes = "", author = "更新于 2019-05-24")
     @ApiResponses(value = {
             @ApiResponse(code = "0000", message = "请求成功", response = QueryUserResponse.class),
-            @ApiResponse( code = "0001", message = "用户不存在", response = QueryUserResponse.class)
+            @ApiResponse(code = "0001", message = "用户不存在", response = QueryUserResponse.class)
 
     })
     public String getUserByOpenid(@ApiParam(value = "微信open_id", required = true) @QueryParam("openId") String openId) {
@@ -49,7 +54,7 @@ public class UserAction {
         try {
             User user = userService.getUserByOpenId(openId);
 
-            if(user==null){
+            if (user == null) {
                 return YouguuJsonHelper.returnJSON("0001", "用户不存在");
             }
 
@@ -146,7 +151,7 @@ public class UserAction {
 
             User inviteUser = userService.getUserByOpenId(inviteOpenId);
 
-            if(null == inviteUser){
+            if (null == inviteUser) {
                 return YouguuJsonHelper.returnJSON("0013", "邀请人不存在");
             }
             int result = userService.addUser(user, inviteUser.getUid());
@@ -176,7 +181,7 @@ public class UserAction {
 
         try {
             User user = userService.getUser(uid);
-            if(null == user){
+            if (null == user) {
                 return YouguuJsonHelper.returnJSON("0011", "用户不存在");
             }
             String headUrl = ImageHandler.genPlaybill(uid, user.getHeadPic());
@@ -212,5 +217,59 @@ public class UserAction {
             return YouguuJsonHelper.returnJSON("0012", "网络加速中");
         }
 
+    }
+
+    @POST
+    @Path(value = "/lottery")
+    @Produces("text/html;charset=UTF-8")
+    @ApiOperation(value = "抽奖", notes = "", author = "更新于 2019-05-26")
+    @ApiResponses(value = {
+            @ApiResponse(code = "0000", message = "中奖了", response = com.ms.web.common.Response.class),
+            @ApiResponse(code = "0003", message = "没有抽奖机会", response = com.ms.web.common.Response.class),
+            @ApiResponse(code = "0004", message = "未中奖", response = com.ms.web.common.Response.class),
+            @ApiResponse(code = "0002", message = "参数错误", response = Response.class),
+            @ApiResponse(code = "0012", message = "网络加速中", response = Response.class)
+    })
+    public String lottery(@ApiParam(value = "用户ID", required = true) @FormParam("uid") int uid) {
+
+        try {
+            //-1:没有抽奖机会；0:未中奖；1:中奖了
+            int result = userSummaryService.lottery(uid);
+            if (result < 0) {
+                return YouguuJsonHelper.returnJSON("0003", "没有抽奖机会啦");
+            }
+            if (result == 0) {
+                return YouguuJsonHelper.returnJSON("0004", "未中奖");
+            }
+
+            return YouguuJsonHelper.returnJSON("0000", "中奖了");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return YouguuJsonHelper.returnJSON("0012", "网络加速中");
+        }
+    }
+
+    @POST
+    @Path(value = "/updateUserCommit")
+    @Produces("text/html;charset=UTF-8")
+    @ApiOperation(value = "修改用户成交状态", notes = "", author = "更新于 2019-05-26")
+    @ApiResponses(value = {
+            @ApiResponse(code = "0000", message = "成功", response = com.ms.web.common.Response.class),
+            @ApiResponse(code = "0002", message = "修改成交状态失败", response = Response.class),
+            @ApiResponse(code = "0012", message = "网络加速中", response = Response.class)
+    })
+    public String updateUserCommit(@ApiParam(value = "用户ID", required = true) @FormParam("uid") int uid) {
+
+        try {
+            int result = userService.updateUserCommit(uid);
+            if (result > 0) {
+                return YouguuJsonHelper.returnJSON("0000", "修改成功");
+            }
+
+            return YouguuJsonHelper.returnJSON("0002", "修改成交状态失败");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return YouguuJsonHelper.returnJSON("0012", "网络加速中");
+        }
     }
 }
