@@ -184,7 +184,7 @@ public class UserAction {
             if (null == user) {
                 return YouguuJsonHelper.returnJSON("0011", "用户不存在");
             }
-            String headUrl = ImageHandler.genPlaybill(uid, user.getOpenId(),user.getThirdId(),user.getHeadPic());
+            String headUrl = ImageHandler.genPlaybill(uid, user.getNickName(),user.getOpenId(),user.getThirdId(),user.getHeadPic());
 
             return YouguuJsonHelper.returnJSON("0000", "ok", headUrl);
         } catch (Exception e) {
