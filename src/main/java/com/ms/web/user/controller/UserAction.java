@@ -1,5 +1,6 @@
 package com.ms.web.user.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ms.pojo.User;
 import com.ms.pojo.UserSummary;
 import com.ms.service.IUserService;
@@ -185,8 +186,15 @@ public class UserAction {
                 return YouguuJsonHelper.returnJSON("0011", "用户不存在");
             }
             String headUrl = ImageHandler.genPlaybill(uid, user.getNickName(),user.getOpenId(),user.getThirdId(),user.getHeadPic());
+            String inviteUrl = ImageHandler.getInviteUrl() + "?inviteOpenId=" + user.getOpenId() + "&inviteUserId=" + user.getThirdId();
 
-            return YouguuJsonHelper.returnJSON("0000", "ok", headUrl);
+            JSONObject json = new JSONObject();
+            json.put("status", "0000");
+            json.put("message", "ok");
+            json.put("result", headUrl);
+            json.put("inviteUrl", inviteUrl);
+            return json.toJSONString();
+            
         } catch (Exception e) {
             e.printStackTrace();
             return YouguuJsonHelper.returnJSON("0012", "网络加速中");
