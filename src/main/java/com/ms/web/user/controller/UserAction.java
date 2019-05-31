@@ -194,7 +194,7 @@ public class UserAction {
             json.put("result", headUrl);
             json.put("inviteUrl", inviteUrl);
             return json.toJSONString();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return YouguuJsonHelper.returnJSON("0012", "网络加速中");
