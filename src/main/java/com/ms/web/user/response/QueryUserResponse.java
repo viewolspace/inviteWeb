@@ -49,6 +49,10 @@ public class QueryUserResponse {
     @ApiModelProperty("1-没有获得大奖；2-获得大奖")
     private int grandPrize;
 
+
+    @ApiModelProperty("1-不是邀请用户；2-是被邀请的用户")
+    private int invite;
+
     public int getUid() {
         return uid;
     }
@@ -135,5 +139,13 @@ public class QueryUserResponse {
 
     public void setGrandPrize(int grandPrize) {
         this.grandPrize = grandPrize;
+    }
+
+    public int getInvite() {
+        return invite;
+    }
+
+    public void setInvite(int invite) {
+        this.invite = invite;
     }
 }

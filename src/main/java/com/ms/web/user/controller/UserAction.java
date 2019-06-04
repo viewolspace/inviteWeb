@@ -2,29 +2,21 @@ package com.ms.web.user.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ms.pojo.User;
+import com.ms.pojo.UserInvite;
 import com.ms.pojo.UserSummary;
+import com.ms.pojo.query.UserInviteQuery;
 import com.ms.service.IUserService;
 import com.ms.service.IUserSummaryService;
 import com.ms.service.ImageHandler;
 import com.ms.web.common.Response;
 import com.ms.web.user.response.QueryUserResponse;
+import com.youguu.core.util.PageHolder;
 import com.youguu.core.util.json.YouguuJsonHelper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
+import io.swagger.annotations.*;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.util.Date;
 
 @SwaggerDefinition(
@@ -76,7 +68,14 @@ public class UserAction {
                 response.setAllTimes(userSummary.getAllTimes());
                 response.setGrandPrize(userSummary.getGrandPrize());
             }
-
+            UserInviteQuery query = new UserInviteQuery();
+            query.setOpenId(openId);
+            PageHolder<UserInvite> pageHolder =  userService.queryUserInvite(query);
+            if(pageHolder!=null && pageHolder.size() > 0 ){
+                response.setInvite(2);
+            }else {
+                response.setInvite(1);
+            }
             return YouguuJsonHelper.returnJSON("0000", "ok", response);
         } catch (Exception e) {
             e.printStackTrace();
