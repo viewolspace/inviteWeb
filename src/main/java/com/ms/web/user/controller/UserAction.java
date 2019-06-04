@@ -191,7 +191,7 @@ public class UserAction {
             JSONObject json = new JSONObject();
             json.put("status", "0000");
             json.put("message", "ok");
-            json.put("result", headUrl);
+            json.put("result", headUrl + "?v=1");
             json.put("inviteUrl", inviteUrl);
             return json.toJSONString();
 
