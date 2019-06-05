@@ -53,6 +53,9 @@ public class QueryUserResponse {
     @ApiModelProperty("1-不是邀请用户；2-是被邀请的用户")
     private int invite;
 
+    @ApiModelProperty("邀请人数")
+    private int inviteNum;
+
     public int getUid() {
         return uid;
     }
@@ -147,5 +150,13 @@ public class QueryUserResponse {
 
     public void setInvite(int invite) {
         this.invite = invite;
+    }
+
+    public int getInviteNum() {
+        return inviteNum;
+    }
+
+    public void setInviteNum(int inviteNum) {
+        this.inviteNum = inviteNum;
     }
 }

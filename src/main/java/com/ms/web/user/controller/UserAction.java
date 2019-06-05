@@ -68,6 +68,9 @@ public class UserAction {
                 response.setAllTimes(userSummary.getAllTimes());
                 response.setGrandPrize(userSummary.getGrandPrize());
             }
+
+            int inviteNum = userService.inviteNum(user.getUid(),1);
+            response.setInviteNum(inviteNum);
             UserInviteQuery query = new UserInviteQuery();
             query.setOpenId(openId);
             PageHolder<UserInvite> pageHolder =  userService.queryUserInvite(query);
