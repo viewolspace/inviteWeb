@@ -185,7 +185,7 @@ public class UserAction {
                 return YouguuJsonHelper.returnJSON("0011", "用户不存在");
             }
             String headUrl = ImageHandler.genPlaybill(uid, user.getNickName(),user.getOpenId(),user.getThirdId(),user.getHeadPic());
-            String inviteUrl = "http://www.view-ol.com/invite/poster.html?uid=" + uid;
+            String inviteUrl = "http://www.view-ol.com/invite/poster.html?from=invite&uid=" + uid;
 
             JSONObject json = new JSONObject();
             json.put("status", "0000");
